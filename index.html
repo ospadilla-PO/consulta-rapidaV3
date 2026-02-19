@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Consulta Rápida - Confirmar</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0B1B2B;--card:#122236;--input:#172D45;--outer:#1a1030;
+  --accent:#E6E600;--accent2:#d4d400;--white:#fff;--gray:#8899AA;--muted:#5A6D7E;
+  --green:#00C853;--red:#FF3B3B;--orange:#FF9800;--border:#1E3A54;--r:12px;--rl:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--outer);min-height:100vh;display:flex;justify-content:center;color:var(--white);-webkit-font-smoothing:antialiased}
+#app{width:100%;max-width:390px;min-height:100vh;background:var(--bg);position:relative;overflow-x:hidden;overflow-y:auto}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:8px 20px;font-size:12px;color:var(--gray);background:var(--bg);position:sticky;top:0;z-index:100}
+.statusbar .t{font-weight:600;color:var(--white)}
+.hdr{display:flex;align-items:center;padding:12px 20px;gap:12px}
+.back{background:0;border:0;color:var(--white);font-size:22px;cursor:pointer;padding:4px 8px;border-radius:8px}
+.htitle{flex:1;text-align:center;font-size:16px;font-weight:600;padding-right:40px}
+.pill{display:inline-block;background:var(--input);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:13px;font-weight:500}
+.conn{display:flex;align-items:center;gap:6px;justify-content:center;padding:4px 0;font-size:11px;color:var(--green)}
+.conn::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%}
+.screen{display:none;padding-bottom:100px;min-height:calc(100vh - 50px);animation:fadeIn .3s ease}
+.screen.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.body{padding:0 20px 20px}
+h1{font-size:20px;font-weight:700;margin-bottom:4px;text-align:center}
+.sub{font-size:13px;color:var(--gray);margin-bottom:16px;text-align:center}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;margin-bottom:12px;cursor:pointer;position:relative;transition:.2s}
+.card:hover{border-color:var(--accent)}
+.card-row{display:flex;align-items:center;gap:14px}
+.card-ico{width:50px;height:50px;background:linear-gradient(135deg,var(--accent),#aacc00);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.card h3{font-size:14px;font-weight:600;color:var(--white);margin-bottom:2px}
+.card p{font-size:12px;color:var(--gray);margin:0}
+.badge{position:absolute;top:12px;right:12px;background:var(--accent);color:#000;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.fg{margin-bottom:14px}
+.fr{display:flex;gap:10px}
+.fr .fg{flex:1}
+.fg label{display:block;font-size:11px;font-weight:500;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.fg input,.fg select{width:100%;background:var(--input);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--white);font-family:inherit;font-size:14px;outline:0;transition:.2s}
+.fg input:focus,.fg select:focus{border-color:var(--accent)}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238899AA' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+.fg select option{background:var(--bg);color:var(--white)}
+.tgl{display:flex;align-items:center;gap:16px;margin-top:6px}
+.tgl-opt{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px}
+.tgl-r{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:.2s}
+.tgl-r.on{border-color:var(--accent);background:var(--accent)}
+.tgl-r.on::after{content:'';width:8px;height:8px;background:#000;border-radius:50%}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{background:var(--input);border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:12px;color:var(--gray);cursor:pointer;transition:.2s;user-select:none}
+.chip.sel{background:rgba(230,230,0,.15);border-color:var(--accent);color:var(--accent)}
+.btn{width:100%;border:0;border-radius:30px;padding:15px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:.2s}
+.btn-p{background:var(--accent);color:#000}
+.btn-p:hover{background:var(--accent2)}
+.btn-p:disabled{opacity:.4;cursor:not-allowed}
+.btn-s{background:0;color:var(--accent);padding:12px;font-size:13px;text-decoration:underline;text-underline-offset:3px;border:0;width:100%;font-family:inherit;cursor:pointer}
+.btn-o{background:0;border:1px solid var(--border);color:var(--white);border-radius:30px;padding:14px;font-family:inherit;font-size:14px;width:100%;cursor:pointer;margin-top:8px}
+.sectit{font-size:13px;font-weight:600;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
+.summ-sec{margin-bottom:16px}
+.summ-sec h3{color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.sr .l{color:var(--gray)}.sr .v{color:var(--white);font-weight:500;text-align:right;max-width:55%}
+.score-wrap{display:flex;flex-direction:column;align-items:center;padding:30px 0 20px}
+.score-c{width:120px;height:120px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:700;position:relative}
+.score-c::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(var(--sc) var(--sp),transparent var(--sp));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#fff calc(100% - 4px));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#fff calc(100% - 4px))}
+.g-a{--sc:#00C853;--sp:90%;color:#00C853;background:rgba(0,200,83,.1)}
+.g-b{--sc:#66BB6A;--sp:72%;color:#66BB6A;background:rgba(102,187,106,.1)}
+.g-c{--sc:#FF9800;--sp:57%;color:#FF9800;background:rgba(255,152,0,.1)}
+.g-d{--sc:#FF3B3B;--sp:35%;color:#FF3B3B;background:rgba(255,59,59,.1)}
+.vbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.vbar-l{font-size:12px;color:var(--gray);width:120px;flex-shrink:0}
+.vbar-t{flex:1;height:8px;background:var(--input);border-radius:4px;overflow:hidden}
+.vbar-f{height:100%;border-radius:4px;transition:width .8s ease}
+.val-wrap{padding:40px 20px;display:flex;flex-direction:column;align-items:center}
+.val-item{display:flex;align-items:center;gap:14px;padding:16px 0;width:100%;max-width:280px;font-size:15px}
+.val-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.val-ico.ld{border:3px solid var(--border);border-top-color:var(--accent);animation:spin .8s linear infinite}
+.val-ico.ok{background:var(--green);color:#fff;animation:pop .3s ease}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.res-ban{padding:24px 20px;text-align:center;border-radius:0 0 24px 24px;margin:0 -20px 20px}
+.res-ban.ap{background:linear-gradient(180deg,#0d4420,var(--bg))}
+.res-ban.rj{background:linear-gradient(180deg,#441010,var(--bg))}
+.res-st{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.res-ti{font-size:18px;font-weight:700;margin-bottom:12px}
+.imp-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px 0}
+.imp-g{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700}
+.imp-lb{font-size:11px;color:var(--gray);text-align:center;margin-top:4px}
+.cdc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.cdc-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
+.cdc-box .cv{font-size:18px;font-weight:700}.cdc-box .cl{font-size:10px;color:var(--gray);margin-top:4px;text-transform:uppercase}
+.nip-row{display:flex;gap:8px;justify-content:center;margin:20px 0}
+.nip-d{width:40px;height:50px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700}
+.nip-fix{background:var(--input);border:1px solid var(--border);color:var(--white)}
+.nip-in{background:var(--input);border:2px solid var(--accent)}
+.nip-in input{width:100%;height:100%;background:0;border:0;text-align:center;color:var(--accent);font-size:22px;font-weight:700;font-family:inherit;outline:0}
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;justify-content:center;align-items:flex-end;backdrop-filter:blur(4px)}
+.modal-ov.show{display:flex}
+.modal-c{background:var(--card);width:100%;max-width:390px;border-radius:20px 20px 0 0;padding:24px 20px 30px;animation:slUp .3s ease}
+@keyframes slUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-c h2{font-size:17px;font-weight:600;margin-bottom:12px}
+.modal-c p{font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:20px}
+.det-sec{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.det-sec h4{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:10px}
+.dr{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.dr .dl{color:var(--gray)}.dr .dv{color:var(--white);font-weight:500}
+.rule{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px}
+.rule .ri{font-size:16px}
+.cfg-panel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(6px)}
+.cfg-panel.show{display:flex}
+.cfg-box{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:24px;width:340px;max-height:80vh;overflow-y:auto}
+.cfg-case{background:var(--input);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px;cursor:pointer;transition:.2s}
+.cfg-case:hover{border-color:var(--accent)}
+.cfg-case h4{font-size:14px;margin-bottom:4px}
+.cfg-case p{font-size:11px;color:var(--gray);margin:0}
+.cfg-case.hl{background:rgba(230,230,0,.08);border-color:var(--accent)}
+.cfg-case.hl h4{color:var(--accent)}
+.fab{position:fixed;bottom:20px;right:calc(50% - 175px);z-index:999;background:rgba(255,255,255,.1);border:1px solid var(--border);color:var(--gray);font-size:10px;padding:6px 10px;border-radius:20px;cursor:pointer;backdrop-filter:blur(8px)}
+.fab:hover{background:rgba(255,255,255,.2);color:var(--white)}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:2000;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.curp-wrap{position:relative}
+.curp-wrap input{padding-right:50px}
+.curp-loader{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:none}
+.curp-loader.show{display:flex;align-items:center;gap:6px}
+.curp-spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.curp-ok{color:var(--green);font-size:18px;font-weight:700}
+.fg-auto{position:relative}
+.fg-auto input{background:rgba(0,200,83,.06);border-color:rgba(0,200,83,.3)}
+.fg-auto .auto-badge{position:absolute;top:0;right:0;font-size:9px;color:var(--green);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.curp-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:16px;margin-bottom:16px;display:none}
+.curp-card.show{display:block;animation:fadeIn .3s ease}
+.curp-card .cc-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.curp-card .cc-l{color:var(--gray)}.curp-card .cc-v{color:var(--white);font-weight:500}
+.curp-card .cc-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.curp-card .cc-head span{font-size:13px;font-weight:600;color:var(--green)}
+.curp-card .cc-ico{width:28px;height:28px;background:rgba(0,200,83,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:14px;font-weight:700}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div class="statusbar">
+  <span class="t">12:30</span>
+  <span style="font-size:11px">Consulta Rápida - confirmar</span>
+  <span style="font-size:11px">📶🔋</span>
+</div>
+
+<!-- S1 -->
+<div class="screen on" id="s1">
+  <div class="hdr"><button class="back" onclick="nav('s1')">←</button><div class="htitle">Captura datos personales</div></div>
+  <div class="body">
+    <div class="card" onclick="nav('s2')" style="margin-top:10px">
+      <span class="badge">RECOMENDADO</span>
+      <div class="card-row"><div class="card-ico">✍️</div><div><h3>Manualmente</h3><p>Llena la información de forma manual</p></div></div>
+    </div>
+    <div class="card" style="opacity:.5;cursor:default">
+      <div class="card-row"><div class="card-ico" style="background:linear-gradient(135deg,#38f,#15c)">📷</div><div><h3>Escanear IFE/INE</h3><p>Agrega información más rápido</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S2 -->
+<div class="screen" id="s2">
+  <div class="hdr"><button class="back" onclick="nav('s1')">←</button><div class="htitle"><div class="conn">CONECTADO</div><span class="pill">Datos</span></div></div>
+  <div class="body">
+    <h1>Datos de la emprendedora</h1><p class="sub">Escribe los datos completos</p>
+    <div class="fg"><label>Nombre(s)</label><input id="f_nombre" placeholder="Ej: Saira Ines"></div>
+    <div class="fg"><label>Apellido paterno</label><input id="f_ap_paterno" placeholder="Ej: Fraga"></div>
+    <div class="fg"><label>Apellido materno</label><input id="f_ap_materno" placeholder="Ej: Morales"></div>
+    <div class="fg"><label>CURP</label><input id="f_curp" maxlength="18" placeholder="18 caracteres" style="text-transform:uppercase"></div>
+    <div class="fg"><label>Fecha de nacimiento</label><input type="date" id="f_fecha_nac"></div>
+    <div class="fg"><label>Entidad de nacimiento</label><select id="f_entidad_nac"><option value="">Seleccionar...</option></select></div>
+    <div class="fg"><label>Teléfono</label><input id="f_tel" maxlength="10" placeholder="10 dígitos"></div>
+    <div class="fg"><label>Confirmación teléfono</label><input id="f_tel_conf" maxlength="10" placeholder="Repite el teléfono"></div>
+    <div class="fg"><label>¿La emprendedora es referida?</label>
+      <div class="tgl">
+        <div class="tgl-opt" onclick="setRef('si')"><span>Sí</span><div class="tgl-r" id="ref_si"></div></div>
+        <div class="tgl-opt" onclick="setRef('no')"><span>No</span><div class="tgl-r on" id="ref_no"></div></div>
+      </div>
+    </div>
+    <button class="btn btn-p" onclick="nav('s3')">Continuar</button>
+    <button class="btn-s" onclick="nav('s1')">Cancelar Solicitud</button>
+  </div>
+</div>
+
+<!-- S3 -->
+<div class="screen" id="s3">
+  <div class="hdr"><button class="back" onclick="nav('s2')">←</button><div class="htitle"><div class="conn">CONECTADO</div><span class="pill">Dirección</span></div></div>
+  <div class="body">
+    <h1>Dirección de la emprendedora</h1><p class="sub">Completa los siguientes campos</p>
+    <div class="fg"><label>Calle</label><input id="f_calle" placeholder="Nombre de la calle"></div>
+    <div class="fr"><div class="fg"><label>No. exterior</label><input id="f_no_ext" placeholder="Ext"></div><div class="fg"><label>No. interior</label><input id="f_no_int" placeholder="Int"></div></div>
+    <div class="fg"><label>Código postal</label><input id="f_cp" maxlength="5" placeholder="5 dígitos"></div>
+    <div class="fg"><label>Colonia / Población</label><input id="f_colonia" placeholder="Colonia"></div>
+    <div class="fg"><label>Alcaldía / Municipio</label><input id="f_municipio" placeholder="Municipio"></div>
+    <div class="fg"><label>Estado</label><select id="f_estado"><option value="">Seleccionar...</option></select></div>
+    <div class="sectit">Información adicional</div>
+    <div class="fg"><label>Antigüedad del domicilio</label><select id="f_ant_dom"><option value="">Seleccionar...</option><option value="0">Menos de un año</option><option value="1">1 a 3 años</option><option value="2">4 a 6 años</option><option value="3">Más de 6 años</option></select></div>
+    <div class="fg"><label>Tipo de domicilio</label><select id="f_tipo_dom"><option value="">Seleccionar...</option><option value="propia">Propia</option><option value="familiar">Familiar</option><option value="hipoteca">Hipoteca o pagando</option><option value="rentada">Rentada o prestada</option></select></div>
+    <div class="fg"><label>Coincidencia INE-domicilio</label><select id="f_ine_dom"><option value="">Seleccionar...</option><option value="si">Sí coincide</option><option value="no">No coincide</option><option value="na">No cuenta con INE actualizada</option></select></div>
+    <button class="btn btn-p" onclick="nav('s4')">Continuar</button>
+    <button class="btn-s" onclick="nav('s2')">Regresar</button>
+  </div>
+</div>
+
+<!-- S4 -->
+<div class="screen" id="s4">
+  <div class="hdr"><button class="back" onclick="nav('s3')">←</button><div class="htitle"><div class="conn">CONECTADO</div><span class="pill">Actividad</span></div></div>
+  <div class="body">
+    <h1>Información sobre la actividad</h1><p class="sub">Datos del negocio y finanzas</p>
+    <div class="sectit">Actividad</div>
+    <div class="fg"><label>Antigüedad del negocio</label><select id="f_ant_neg"><option value="">Seleccionar...</option><option value="0">Apenas abrió negocio</option><option value="1">Menos de un año</option><option value="2">1 a 3 años</option><option value="3">4 a 6 años</option><option value="4">Más de 6 años</option></select></div>
+    <div class="fg"><label>Ubicación del negocio</label><select id="f_ubic_neg"><option value="">Seleccionar...</option></select></div>
+    <div class="sectit">Finanzas</div>
+    <div class="fg"><label>Ingresos semanales ($)</label><input type="number" id="f_ingresos" placeholder="0"></div>
+    <div class="fg"><label>Gastos semanales ($)</label><input type="number" id="f_gastos" placeholder="0"></div>
+    <div class="fg"><label>Capacidad de pago semanal ($)</label><input type="number" id="f_capacidad" placeholder="0"></div>
+    <div class="sectit">Experiencia crediticia</div>
+    <div class="fg"><label>Experiencia con créditos grupales</label><select id="f_exp_grupal"><option value="0">Ninguna</option><option value="1">1</option><option value="2">2 a 3</option><option value="3">Más de 3</option></select></div>
+    <div class="fg"><label>Otros tipos de crédito</label><div class="chips" id="chips_box"></div></div>
+    <button class="btn btn-p" onclick="nav('s5')">Continuar</button>
+    <button class="btn-s" onclick="nav('s3')">Regresar</button>
+  </div>
+</div>
+
+<!-- S5 Confirmación -->
+<div class="screen" id="s5">
+  <div class="hdr"><button class="back" onclick="nav('s4')">←</button><div class="htitle">Confirmación de datos</div></div>
+  <div class="body"><p class="sub">Verifica que todos los datos sean correctos</p><div id="summary"></div>
+    <button class="btn btn-p" onclick="doCalcIPP()">Guardar y continuar</button>
+    <button class="btn-s" onclick="nav('s4')">Regresar a editar</button>
+  </div>
+</div>
+
+<!-- S6 Calificación inicial -->
+<div class="screen" id="s6">
+  <div class="hdr"><button class="back" onclick="nav('s5')">←</button><div class="htitle">Calificación inicial</div></div>
+  <div class="body">
+    <div class="score-wrap"><div class="score-c" id="sc6"></div>
+      <p style="font-size:14px;color:var(--gray);text-align:center;max-width:280px;line-height:1.4;margin-top:16px">Esta calificación se calcula con la información capturada, antes de consultar el buró (CDC).</p>
+    </div>
+    <div id="bars6"></div>
+    <div id="btns6"></div>
+  </div>
+</div>
+
+<!-- S7 Detalle sin buró -->
+<div class="screen" id="s7">
+  <div class="hdr"><button class="back" onclick="nav('s6')">←</button><div class="htitle">Calificación sin buró</div></div>
+  <div class="body">
+    <div class="score-wrap" style="padding:16px 0 10px"><div class="score-c" id="sc7" style="width:80px;height:80px;font-size:36px"></div><p id="sc7num" style="font-size:12px;color:var(--gray);margin-top:6px"></p></div>
+    <div id="det7"></div>
+    <button class="btn-o" onclick="nav('s6')">Regresar</button>
+  </div>
+</div>
+
+<!-- Modal SMS - removed (no buró consultation) -->
+
+<!-- Config -->
+<div class="cfg-panel" id="cfgPanel">
+  <div class="cfg-box">
+    <h2 style="font-size:18px;margin-bottom:16px">⚙️ Config Demo</h2>
+    <p style="font-size:13px;color:var(--gray);margin-bottom:16px">Elige un caso para pre-cargar datos</p>
+    <div class="cfg-case hl" onclick="loadCase('E')"><h4>🔴 Caso Real: Ana Luisa Martinez</h4><p>Datos reales LUCI. IPP = 70 → Grado B.</p></div>
+    <div class="cfg-case" onclick="loadCase('A')"><h4>Caso A: IPP = D (score bajo)</h4><p>Finanzas débiles, sin experiencia. Score ~0.</p></div>
+    <div class="cfg-case" onclick="loadCase('B')"><h4>Caso B: IPP = B (score bueno)</h4><p>Datos sólidos, buena estabilidad. Score ~76.</p></div>
+    <div class="cfg-case" onclick="loadCase('C')"><h4>Caso C: IPP = A (score excelente)</h4><p>Datos excelentes en todas las variables. Score ~98.</p></div>
+    <div class="cfg-case" onclick="loadCase('D')"><h4>Caso D: IPP = C (score medio)</h4><p>Datos aceptables, algunas debilidades. Score ~61.</p></div>
+    <button class="btn-o" onclick="closeCfg()" style="margin-top:12px">Cerrar</button>
+  </div>
+</div>
+
+<button class="fab" onclick="openCfg()">⚙ Demo</button>
+
+</div><!-- end app -->
+
+<script>
+// ============ DATA ============
+const ESTADOS=["Aguascalientes","Baja California","Baja California Sur","Campeche","Chiapas","Chihuahua","Ciudad de México","Coahuila","Colima","Durango","Estado de México","Guanajuato","Guerrero","Hidalgo","Jalisco","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"];
+const UBICS=[{v:"tienda",l:"Tienda"},{v:"mercado",l:"Mercado"},{v:"locales-comun",l:"Locales en comunidad"},{v:"taller",l:"Taller"},{v:"fabrica",l:"Fábrica"},{v:"oficina",l:"Oficina"},{v:"domicilio-especial",l:"Domicilio especial"},{v:"kiosco",l:"Kiosco"},{v:"puesto-fijo-tianguis",l:"Puesto fijo tianguis"},{v:"puesto-fijo-via",l:"Puesto fijo vía pública"},{v:"puesto-improv-tianguis",l:"Puesto improvisado tianguis"},{v:"puesto-improv-via",l:"Puesto improvisado vía"},{v:"vehiculo",l:"Vehículo"},{v:"otro-local",l:"Otro con local"},{v:"otro-sin-local",l:"Otro sin local"},{v:"ambulante",l:"Ambulante"},{v:"domicilio-cliente",l:"Domicilio del cliente"},{v:"catalogo",l:"Catálogo"}];
+const ANTL=[{v:"0",l:"Menos de un año"},{v:"1",l:"1 a 3 años"},{v:"2",l:"4 a 6 años"},{v:"3",l:"Más de 6 años"}];
+const TIPL=[{v:"propia",l:"Propia"},{v:"familiar",l:"Familiar"},{v:"hipoteca",l:"Hipoteca o pagando"},{v:"rentada",l:"Rentada o prestada"}];
+const INEL=[{v:"si",l:"Sí coincide"},{v:"no",l:"No coincide"},{v:"na",l:"No cuenta con INE actualizada"}];
+const EXPL=[{v:"0",l:"Ninguna"},{v:"1",l:"1"},{v:"2",l:"2 a 3"},{v:"3",l:"Más de 3"}];
+const CHIPS_D=[{v:"personal",l:"Crédito personal"},{v:"departamental",l:"Crédito departamental"},{v:"nomina",l:"Crédito de nómina"},{v:"hipotecario",l:"Crédito hipotecario"},{v:"auto",l:"Crédito auto/moto"}];
+const T1=["tienda","mercado","oficina","fabrica","taller"],T2=["locales-comun","kiosco","puesto-fijo-tianguis","puesto-fijo-via","domicilio-especial"],T3=["puesto-improv-tianguis","puesto-improv-via","vehiculo","otro-local","catalogo","domicilio-cliente"];
+
+// ============ STATE ============
+let D={referida:"no",chips:[],ippScore:0,ippGrade:""};
+
+// ============ GOOGLE SHEETS CONFIG ============
+// 👇 PEGA TU URL DE GOOGLE APPS SCRIPT AQUÍ 👇
+const SHEETS_URL = "";
+
+async function saveToSheets(data) {
+  if (!SHEETS_URL) { console.log("Google Sheets no configurado. Datos:", data); return; }
+  try {
+    await fetch(SHEETS_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type":"application/json"}, body: JSON.stringify(data) });
+    showToast("✓ Guardado en Google Sheets");
+  } catch(e) { console.error("Error guardando:", e); }
+}
+
+function showToast(msg) {
+  const t = document.createElement("div"); t.className="toast"; t.textContent=msg;
+  document.getElementById("app").appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+
+// ============ INIT ============
+function init() {
+  const es=ESTADOS.map(e=>`<option>${e}</option>`).join("");
+  document.getElementById("f_entidad_nac").innerHTML=`<option value="">Seleccionar...</option>${es}`;
+  document.getElementById("f_estado").innerHTML=`<option value="">Seleccionar...</option>${es}`;
+  document.getElementById("f_ubic_neg").innerHTML=`<option value="">Seleccionar...</option>${UBICS.map(u=>`<option value="${u.v}">${u.l}</option>`).join("")}`;
+  const cb=document.getElementById("chips_box");
+  cb.innerHTML=CHIPS_D.map(c=>`<div class="chip" data-v="${c.v}" onclick="togChip(this)">${c.l}</div>`).join("");
+}
+
+// ============ NAV ============
+function nav(id) {
+  document.querySelectorAll(".screen.on").forEach(s=>{s.classList.remove("on");s.style.display="none"});
+  const s=document.getElementById(id); s.style.display="block";
+  requestAnimationFrame(()=>s.classList.add("on"));
+  document.getElementById("app").scrollTop=0; window.scrollTo(0,0);
+  if(id==="s5") buildSummary();
+  if(id==="s9") runVal();
+}
+
+// ============ HELPERS ============
+function gv(id){const e=document.getElementById(id);return e?e.value:"";}
+function gvt(id){const e=document.getElementById(id);if(!e)return"";if(e.tagName==="SELECT")return e.options[e.selectedIndex]?.text||"";return e.value;}
+function setRef(v){D.referida=v;document.getElementById("ref_si").classList.toggle("on",v==="si");document.getElementById("ref_no").classList.toggle("on",v==="no");}
+function togChip(el){el.classList.toggle("sel");const v=el.dataset.v;if(el.classList.contains("sel")){if(!D.chips.includes(v))D.chips.push(v);}else{D.chips=D.chips.filter(x=>x!==v);}}
+function openCfg(){document.getElementById("cfgPanel").classList.add("show");}
+function closeCfg(){document.getElementById("cfgPanel").classList.remove("show");}
+function lk(arr,val){const f=arr.find(x=>x.v===val);return f?f.l:val||"—";}
+function gc(g){return{A:"#00C853",B:"#66BB6A",C:"#FF9800",D:"#FF3B3B"}[g]||"#fff";}
+function gb(g){return{A:"rgba(0,200,83,.15)",B:"rgba(102,187,106,.15)",C:"rgba(255,152,0,.15)",D:"rgba(255,59,59,.15)"}[g]||"transparent";}
+function sr(l,v){return`<div class="sr"><span class="l">${l}</span><span class="v">${v||"—"}</span></div>`;}
+function dr(l,v){return`<div class="dr"><span class="dl">${l}</span><span class="dv">${v||"—"}</span></div>`;}
+
+// ============ SUMMARY S5 ============
+function buildSummary() {
+  const cl=D.chips.map(c=>{const m={personal:"Personal",departamental:"Departamental",nomina:"Nómina",hipotecario:"Hipotecario",auto:"Auto/moto"};return m[c]||c;}).join(", ")||"Ninguno";
+  document.getElementById("summary").innerHTML=`
+    <div class="summ-sec"><h3>Datos personales</h3>${sr("Nombre",gv("f_nombre")+" "+gv("f_ap_paterno")+" "+gv("f_ap_materno"))}${sr("CURP",gv("f_curp"))}${sr("Fecha nac.",gv("f_fecha_nac"))}${sr("Entidad",gvt("f_entidad_nac"))}${sr("Teléfono",gv("f_tel"))}${sr("¿Referida?",D.referida==="si"?"Sí":"No")}</div>
+    <div class="summ-sec"><h3>Dirección</h3>${sr("Calle",gv("f_calle")+" "+gv("f_no_ext")+(gv("f_no_int")?" Int "+gv("f_no_int"):""))}${sr("CP",gv("f_cp"))}${sr("Colonia",gv("f_colonia"))}${sr("Municipio",gv("f_municipio"))}${sr("Estado",gvt("f_estado"))}${sr("Antigüedad dom.",gvt("f_ant_dom"))}${sr("Tipo domicilio",gvt("f_tipo_dom"))}${sr("INE coincide",gvt("f_ine_dom"))}</div>
+    <div class="summ-sec"><h3>Actividad y finanzas</h3>${sr("Antigüedad negocio",gvt("f_ant_neg"))}${sr("Ubicación",gvt("f_ubic_neg"))}${sr("Ingresos sem.","$"+gv("f_ingresos"))}${sr("Gastos sem.","$"+gv("f_gastos"))}${sr("Capacidad pago","$"+gv("f_capacidad"))}</div>
+    <div class="summ-sec"><h3>Experiencia crediticia</h3>${sr("Créditos grupales",gvt("f_exp_grupal"))}${sr("Otros créditos",cl)}</div>`;
+}
+
+// ============ IPP CALC ============
+function calcIPP() {
+  let s=0;
+  // 1) ESTABILIDAD RESIDENCIAL (25 pts)
+  // Ant dom (8): <1→2, 1-3→4, 4-6→6, >6→8
+  const ad=parseInt(gv("f_ant_dom"))||0; s+=[2,4,6,8][ad]||0;
+  // Tipo dom (7): propia→7, hipoteca→6, familiar→4, rentada→2
+  s+=({propia:7,familiar:4,hipoteca:6,rentada:2}[gv("f_tipo_dom")])||0;
+  // INE (10): si→10, no→5, na→2
+  s+=({si:10,no:5,na:2}[gv("f_ine_dom")])||0;
+  // 2) ACTIVIDAD ECONÓMICA (25 pts)
+  // Ant neg (12): apenas→3, <1→6, 1-3→8, 4-6→10, >6→12
+  const an=parseInt(gv("f_ant_neg"))||0; s+=[3,6,8,10,12][an]||0;
+  // Ubic neg (13): tier1→13, tier2→9, tier3→5
+  const ub=gv("f_ubic_neg"); if(T1.includes(ub))s+=13;else if(T2.includes(ub))s+=9;else if(T3.includes(ub))s+=5;else s+=5;
+  // 3) EXPERIENCIA CREDITICIA (20 pts)
+  // Exp grupal (12): ninguno→6, 1-3→9, >3→12
+  const eg=parseInt(gv("f_exp_grupal"))||0; s+=[6,9,9,12][eg]||6;
+  // Otros créditos (5): 2+→5, <2→3
+  s+=(D.chips.length>=2?5:3);
+  // Referida (3): si→3, no→1
+  s+=(D.referida==="si"?3:1);
+  // 4) CAPACIDAD FINANCIERA (30 pts)
+  const ing=parseFloat(gv("f_ingresos"))||0,gas=parseFloat(gv("f_gastos"))||0,cap=parseFloat(gv("f_capacidad"))||0;
+  // Nivel ingreso (10): >=8000→10, 5000-7999→8, 1000-4999→5, <1000→2
+  if(ing>=8000)s+=10;else if(ing>=5000)s+=8;else if(ing>=1000)s+=5;else s+=2;
+  // Coherencia ingreso vs gasto (10): gasto<=70%→10, 71-85%→6, >85%→2
+  const rg=ing>0?gas/ing:999;
+  if(rg<=0.70)s+=10;else if(rg<=0.85)s+=6;else s+=2;
+  // Capacidad pago razonable (10): cap<=40%ing→10, 41-60%→6, >60%→2
+  const rc=ing>0?cap/ing:999;
+  if(rc<=0.40)s+=10;else if(rc<=0.60)s+=6;else s+=2;
+  s=Math.min(s,100);
+  // PENALIZADORES (se mantienen sin cambio)
+  const fl=ing-gas;
+  if(fl>=1000){}else if(fl>=500)s-=5;else if(fl>=0)s-=10;else s-=20;
+  let rp=fl>0?cap/fl:999;if(rp<=.4){}else if(rp<=.6)s-=5;else if(rp<=1)s-=10;else s-=20;
+  let rgg=ing>0?gas/ing:999;if(rgg<=.6){}else if(rgg<=.75)s-=3;else if(rgg<=.9)s-=7;else s-=12;
+  s=Math.max(0,Math.min(100,s));
+  D.ippScore=s; D.ippGrade=s>=80?"A":s>=65?"B":s>=50?"C":"D";
+  return{score:s,grade:D.ippGrade};
+}
+
+function doCalcIPP() { calcIPP(); renderS6(); nav("s6"); }
+
+// ============ BARS ============
+function getBars() {
+  const ing=parseFloat(gv("f_ingresos"))||0,gas=parseFloat(gv("f_gastos"))||0,cap=parseFloat(gv("f_capacidad"))||0,fl=ing-gas;
+  const ad=parseInt(gv("f_ant_dom"))||0,an=parseInt(gv("f_ant_neg"))||0;
+  // Estab residencial: max 25
+  const stP=([2,4,6,8][ad]||0)+({propia:7,familiar:4,hipoteca:6,rentada:2}[gv("f_tipo_dom")]||0)+({si:10,no:5,na:2}[gv("f_ine_dom")]||0);
+  const stV=Math.min(Math.max(Math.round(stP/25*100),5),100);
+  // Actividad económica: max 25
+  const acP=([3,6,8,10,12][an]||0)+(T1.includes(gv("f_ubic_neg"))?13:T2.includes(gv("f_ubic_neg"))?9:5);
+  const acV=Math.min(Math.max(Math.round(acP/25*100),5),100);
+  // Experiencia crediticia: max 20
+  const exP=([6,9,9,12][parseInt(gv("f_exp_grupal"))||0]||6)+(D.chips.length>=2?5:3)+(D.referida==="si"?3:1);
+  const exV=Math.min(Math.max(Math.round(exP/20*100),5),100);
+  // Capacidad financiera: max 30
+  let fnP=0;
+  if(ing>=8000)fnP+=10;else if(ing>=5000)fnP+=8;else if(ing>=1000)fnP+=5;else fnP+=2;
+  const rg=ing>0?gas/ing:999; if(rg<=0.70)fnP+=10;else if(rg<=0.85)fnP+=6;else fnP+=2;
+  const rc=ing>0?cap/ing:999; if(rc<=0.40)fnP+=10;else if(rc<=0.60)fnP+=6;else fnP+=2;
+  // Apply penalties for bar display
+  let fp=0;if(fl>=1000){}else if(fl>=500)fp-=5;else if(fl>=0)fp-=10;else fp-=20;
+  let rp=fl>0?cap/fl:999;if(rp<=.4){}else if(rp<=.6)fp-=5;else if(rp<=1)fp-=10;else fp-=20;
+  let rgg=ing>0?gas/ing:999;if(rgg<=.6){}else if(rgg<=.75)fp-=3;else if(rgg<=.9)fp-=7;else fp-=12;
+  const fnV=Math.min(Math.max(Math.round((fnP+fp+35)/65*100),5),100);
+  return{stV,fnV,acV,exV};
+}
+
+function barColor(v){return v>=65?"#00C853":v>=40?"#FF9800":"#FF3B3B";}
+function barHTML(label,val){return`<div class="vbar"><span class="vbar-l">${label}</span><div class="vbar-t"><div class="vbar-f" style="width:${val}%;background:${barColor(val)}"></div></div></div>`;}
+
+// ============ RENDER S6 ============
+function renderS6() {
+  const g=D.ippGrade;
+  document.getElementById("sc6").className="score-c g-"+g.toLowerCase(); document.getElementById("sc6").textContent=g;
+  const b=getBars();
+  document.getElementById("bars6").innerHTML=barHTML("Est. Residencial",b.stV)+barHTML("Act. Económica",b.acV)+barHTML("Exp. Crediticia",b.exV)+barHTML("Cap. Financiera",b.fnV);
+  let btns=`<button class="btn btn-p" onclick="resetApp()">Nueva consulta</button><button class="btn-s" onclick="buildDet7();nav('s7')">Ver detalle</button>`;
+  if(g==="D"){btns=`<p style="text-align:center;font-size:12px;color:var(--red);margin-top:10px;margin-bottom:10px">⚠ Calificación insuficiente para continuar con el proceso.</p>`+btns;}
+  document.getElementById("btns6").innerHTML=btns;
+  buildDet7();
+
+  // 💾 Guardar en Google Sheets al generar calificación inicial
+  saveToSheets({
+    fecha: new Date().toISOString(),
+    nombre: gv("f_nombre")+" "+gv("f_ap_paterno")+" "+gv("f_ap_materno"),
+    curp: gv("f_curp"), telefono: gv("f_tel"),
+    cp: gv("f_cp"), estado: gvt("f_estado"), municipio: gv("f_municipio"),
+    tipo_domicilio: gvt("f_tipo_dom"), ant_domicilio: gvt("f_ant_dom"), ine_coincide: gvt("f_ine_dom"),
+    ant_negocio: gvt("f_ant_neg"), ubic_negocio: gvt("f_ubic_neg"),
+    ingresos: gv("f_ingresos"), gastos: gv("f_gastos"), capacidad: gv("f_capacidad"),
+    exp_grupal: gvt("f_exp_grupal"), otros_creditos: D.chips.join(","), referida: D.referida,
+    ipp_score: D.ippScore, ipp_grade: D.ippGrade
+  });
+}
+
+// ============ DETAIL S7 ============
+function buildDet7() {
+  const g=D.ippGrade,fl=parseFloat(gv("f_ingresos"))-parseFloat(gv("f_gastos"));
+  document.getElementById("sc7").className="score-c g-"+g.toLowerCase();document.getElementById("sc7").textContent=g;
+  document.getElementById("sc7num").textContent="Score: "+D.ippScore+"/100";
+  const cl=D.chips.map(c=>({personal:"Personal",departamental:"Departamental",nomina:"Nómina",hipotecario:"Hipotecario",auto:"Auto/moto"}[c]||c)).join(", ")||"Ninguno";
+  document.getElementById("det7").innerHTML=`
+    <div class="det-sec"><h4>💰 Ingresos y gastos</h4>${dr("Ingresos sem.","$"+gv("f_ingresos"))}${dr("Gastos sem.","$"+gv("f_gastos"))}${dr("Capacidad de pago","$"+gv("f_capacidad"))}${dr("Flujo neto","$"+fl)}</div>
+    <div class="det-sec"><h4>🏪 Negocio / Actividad</h4>${dr("Antigüedad",gvt("f_ant_neg"))}${dr("Ubicación",gvt("f_ubic_neg"))}${dr("¿Referida?",D.referida==="si"?"Sí":"No")}</div>
+    <div class="det-sec"><h4>🏠 Domicilio</h4>${dr("CP",gv("f_cp"))}${dr("Tipo",gvt("f_tipo_dom"))}${dr("Antigüedad",gvt("f_ant_dom"))}${dr("INE coincide",gvt("f_ine_dom"))}</div>
+    <div class="det-sec"><h4>📊 Experiencia</h4>${dr("Créditos grupales",gvt("f_exp_grupal"))}${dr("Otros créditos",cl)}</div>`;
+}
+
+// ============ RESET ============
+function resetApp(){D.referida="no";D.chips=[];document.querySelectorAll(".fg input").forEach(i=>i.value="");document.querySelectorAll(".fg select").forEach(s=>s.selectedIndex=0);document.querySelectorAll(".chip").forEach(c=>c.classList.remove("sel"));setRef("no");nav("s1");}
+
+// ============ DEMO CASES ============
+const CASES={
+  A:{f_nombre:"María",f_ap_paterno:"López",f_ap_materno:"García",f_curp:"LOGM900101HDFRRA09",f_fecha_nac:"1990-01-01",f_entidad_nac:"Ciudad de México",f_tel:"5551234567",f_tel_conf:"5551234567",f_calle:"Av. Reforma",f_no_ext:"100",f_no_int:"",f_cp:"06600",f_colonia:"Juárez",f_municipio:"Cuauhtémoc",f_estado:"Ciudad de México",f_ant_dom:"0",f_tipo_dom:"rentada",f_ine_dom:"na",f_ant_neg:"0",f_ubic_neg:"ambulante",f_ingresos:"800",f_gastos:"750",f_capacidad:"200",f_exp_grupal:"0",_ref:"no",_chips:[]},
+  B:{f_nombre:"Saira Ines",f_ap_paterno:"Fraga",f_ap_materno:"Morales",f_curp:"FAMS830802MDFRRO3",f_fecha_nac:"1983-08-02",f_entidad_nac:"Ciudad de México",f_tel:"5555555555",f_tel_conf:"5555555555",f_calle:"C Nezahualcoyotl",f_no_ext:"Q",f_no_int:"23",f_cp:"55118",f_colonia:"Alfredo Mazo",f_municipio:"Ecatepec",f_estado:"Estado de México",f_ant_dom:"1",f_tipo_dom:"familiar",f_ine_dom:"no",f_ant_neg:"2",f_ubic_neg:"tienda",f_ingresos:"3000",f_gastos:"1500",f_capacidad:"500",f_exp_grupal:"2",_ref:"si",_chips:["personal","departamental"]},
+  C:{f_nombre:"Ana Lucía",f_ap_paterno:"Hernández",f_ap_materno:"Torres",f_curp:"HETA850315MDFRNA05",f_fecha_nac:"1985-03-15",f_entidad_nac:"Jalisco",f_tel:"3331234567",f_tel_conf:"3331234567",f_calle:"Av. Patria",f_no_ext:"500",f_no_int:"12",f_cp:"44600",f_colonia:"Jardines del Sol",f_municipio:"Zapopan",f_estado:"Jalisco",f_ant_dom:"3",f_tipo_dom:"propia",f_ine_dom:"si",f_ant_neg:"4",f_ubic_neg:"oficina",f_ingresos:"5000",f_gastos:"2000",f_capacidad:"800",f_exp_grupal:"3",_ref:"si",_chips:["personal","departamental","nomina"]},
+  D:{f_nombre:"Carmen",f_ap_paterno:"Ruiz",f_ap_materno:"Vega",f_curp:"RUVC880720MDFRGA01",f_fecha_nac:"1988-07-20",f_entidad_nac:"Puebla",f_tel:"2221234567",f_tel_conf:"2221234567",f_calle:"5 de Mayo",f_no_ext:"33",f_no_int:"",f_cp:"72000",f_colonia:"Centro",f_municipio:"Puebla",f_estado:"Puebla",f_ant_dom:"1",f_tipo_dom:"familiar",f_ine_dom:"no",f_ant_neg:"2",f_ubic_neg:"mercado",f_ingresos:"2000",f_gastos:"1300",f_capacidad:"400",f_exp_grupal:"1",_ref:"si",_chips:["personal"]},
+  E:{f_nombre:"Ana Luisa",f_ap_paterno:"Martinez",f_ap_materno:"Mijangos",f_curp:"MAMA921013MMCRJN04",f_fecha_nac:"1992-10-13",f_entidad_nac:"Estado de México",f_tel:"5636741776",f_tel_conf:"5636741776",f_calle:"Buen Suceso",f_no_ext:"LT 7",f_no_int:"SN",f_cp:"53658",f_colonia:"La Cebada (Barrio La Cebada)",f_municipio:"Naucalpan de Juárez",f_estado:"Estado de México",f_ant_dom:"2",f_tipo_dom:"familiar",f_ine_dom:"no",f_ant_neg:"3",f_ubic_neg:"domicilio-cliente",f_ingresos:"4500",f_gastos:"2500",f_capacidad:"1000",f_exp_grupal:"3",_ref:"si",_chips:["personal","departamental"]}
+};
+
+function loadCase(c) {
+  closeCfg();
+  const cs=CASES[c];
+  const fields=["f_nombre","f_ap_paterno","f_ap_materno","f_curp","f_fecha_nac","f_tel","f_tel_conf","f_calle","f_no_ext","f_no_int","f_cp","f_colonia","f_municipio","f_ingresos","f_gastos","f_capacidad"];
+  fields.forEach(f=>{const el=document.getElementById(f);if(el)el.value=cs[f]||"";});
+  ["f_entidad_nac","f_estado","f_ant_dom","f_tipo_dom","f_ine_dom","f_ant_neg","f_ubic_neg","f_exp_grupal"].forEach(f=>{
+    const el=document.getElementById(f);if(el){for(let i=0;i<el.options.length;i++){if(el.options[i].value===cs[f]||el.options[i].text===cs[f]){el.selectedIndex=i;break;}}}
+  });
+  D.referida=cs._ref; setRef(cs._ref);
+  D.chips=[...cs._chips];
+  document.querySelectorAll(".chip").forEach(ch=>ch.classList.toggle("sel",D.chips.includes(ch.dataset.v)));
+  nav("s1");
+}
+
+// Init
+init();
+</script>
+</body>
+</html>
